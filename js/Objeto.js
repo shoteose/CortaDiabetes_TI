@@ -7,7 +7,7 @@ class Objeto {
         this.velocidadeInicial = this.velocidade;
         this.subindo = true;
         this.tipo = this.definirTipo();
-        this.img = loadImage(this.definirImagem());
+        this.img = loadImage(this.definirImagem(this.tipo));
     }
 
     definirTipo() {
@@ -17,9 +17,9 @@ class Objeto {
         return "coracao";
     }
 
-    definirImagem() {
-        if (this.tipo === "mau") return "assets/img/happymeal.png";
-        if (this.tipo === "bom") return "assets/img/laranja.jpg";
+    definirImagem(tipo) {
+        if (tipo === "mau") return "assets/img/happymeal.png";
+        if (tipo === "bom") return "assets/img/laranja.png";
         return "assets/img/coracao.png";
     }
 
