@@ -5,6 +5,10 @@ let objetos = [];
 let score = 0;
 let vidas = 3;
 let rastros = [];
+let btnIniciar;
+let btnOpcoes;
+let btnAjuda;
+let btnVoltar;
 
 /***
  * 
@@ -37,6 +41,21 @@ function setup() {
     let continuous = true;
     let interim = false;
     speechRec.start(continuous, interim);
+
+    const cls = "button-start";
+    btnIniciar = createButton("Iniciar Jogo");
+    btnIniciar.class(cls);
+    btnIniciar.mouseClicked(() => {
+        btnIniciar.class(btnIniciar.class() ? "" : cls);
+    });
+    btnIniciar.position(240, 240);
+
+    btnOpcoes = createButton("Opções");
+    btnOpcoes.class(cls);
+    btnOpcoes.mouseClicked(() => {
+        btnOpcoes.class(btnOpcoes.class() ? "" : cls);
+    });
+    btnOpcoes.position(240, 300);
 }
 
 
@@ -62,11 +81,9 @@ function draw() {
 }
 
 function menuInicial() {
-
-    background(125);
+    background(163,186,255);
     textSize(32);
-    text("Menu", width / 2 - 100, height / 2);
-
+    text("Corta-Diabetes", width - 364, height / 3);
 }
 
 function menuOpcoes() {
