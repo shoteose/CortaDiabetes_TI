@@ -20,6 +20,7 @@ let gameover = false;
 
 function preload() {
     handPose = ml5.handPose({ flipped: true });
+    carregaMedia();
 }
 
 function gotHands(results) {
@@ -27,7 +28,7 @@ function gotHands(results) {
 }
 
 function setup() {
-    createCanvas(640, 480);
+    createCanvas(windowWidth - 20, windowHeight - 20);
     video = createCapture(VIDEO, { flipped: true });
     video.hide();
     handPose.detectStart(video, gotHands);
@@ -37,10 +38,15 @@ function setup() {
     let continuous = true;
     let interim = false;
     speechRec.start(continuous, interim);
+
+    textFont(fonteTexto);
+
 }
 
 
 function draw() {
+
+    resizeCanvas(windowWidth -20, windowHeight-20);
 
     switch (estadoJogo) {
         case 0:
@@ -66,6 +72,9 @@ function menuInicial() {
     background(125);
     textSize(32);
     text("Menu", width / 2 - 100, height / 2);
+
+    textSize(15);
+    text("Paulo Novo && Hugo Diniz | ECGM - TI ", windowWidth - 475, windowHeight - 30);
 
 }
 
@@ -100,7 +109,6 @@ function gotSpeech() {
             if (speechRec.resultString == "jogar") {
                 estadoJogo = 1;
 
-
                 objetos = [];
                 for (let i = 0; i < 5; i++) {
                     objetos.push(new Objeto());
@@ -123,6 +131,9 @@ function gotSpeech() {
                 gameover = false;
                 estadoJogo = 1;
 
+                score = 0;
+                vidas = 3;
+
                 objetos = [];
                 for (let i = 0; i < 5; i++) {
                     objetos.push(new Objeto());
@@ -136,11 +147,7 @@ function gotSpeech() {
                 console.log("voltei");
 
             }
-
-
         }
-
-
     }
 }
 
@@ -154,7 +161,7 @@ function jogo() {
             fill(255, 0, 0, rastro.alpha);
             noStroke();
             //console.log(rastro);
-            
+
             circle(rastro.x, rastro.y, 10);
 
             rastro.alpha -= 10;
@@ -162,7 +169,6 @@ function jogo() {
             if (rastro.alpha <= 0) {
                 rastros.splice(i, 1);
             }
-
         }
 
         for (let i = objetos.length - 1; i >= 0; i--) {
@@ -213,13 +219,16 @@ function jogo() {
 
         if (vidas <= 0) {
             gameover = true;
-            textSize(25);
-            score = 0;
-            vidas = 3;
         }
 
     } else {
         textSize(15);
         text("Gameover!! Tiveste " + score + " pontos!!", width / 2, height / 2);
     }
+}
+
+function carregaMedia(){
+
+    fonteTexto = loadFont("assets/font/joystix_monospace.otf");
+
 }
