@@ -4,11 +4,13 @@ let hands = [];
 let objetos = [];
 let score = 0;
 let vidas = 3;
+let volumeMusica = 0.5;
+let sliderMusica;
 let rastros = [];
-let btnIniciar;
-let btnOpcoes;
-let btnAjuda;
-let btnVoltar;
+//let btnIniciar;
+//let btnOpcoes;
+//let btnAjuda;
+//let btnVoltar;
 
 /***
  * 
@@ -32,9 +34,10 @@ function gotHands(results) {
 }
 
 function setup() {
-    createCanvas(windowWidth - 20, windowHeight - 20);
+    createCanvas(640,480);
     video = createCapture(VIDEO, { flipped: true });
     video.hide();
+    
     handPose.detectStart(video, gotHands);
 
     let lang = navigation.language || 'pt-BR';
@@ -43,66 +46,77 @@ function setup() {
     let interim = false;
     speechRec.start(continuous, interim);
 
-    const cls = "button-start";
-    btnIniciar = createButton("Iniciar Jogo");
-    btnIniciar.class(cls);
-    btnIniciar.mouseClicked(() => {
-        btnIniciar.class(btnIniciar.class() ? "" : cls);
-    });
-    btnIniciar.position(240, 240);
-
-    btnOpcoes = createButton("Opções");
-    btnOpcoes.class(cls);
-    btnOpcoes.mouseClicked(() => {
-        btnOpcoes.class(btnOpcoes.class() ? "" : cls);
-    });
-    btnOpcoes.position(240, 300);
+    slider();
 
     textFont(fonteTexto);
 
+    initMusica();
+
 }
 
+function slider(){
+
+    sliderMusica = createSlider(0, 1, volumeMusica, 0.01);
+    sliderMusica.position(20, 50);
+    sliderMusica.size(200);
+    sliderMusica.hide();
+
+}
 
 function draw() {
 
-    resizeCanvas(windowWidth -20, windowHeight-20);
+    initMusica();
 
     switch (estadoJogo) {
         case 0:
+            sliderMusica.hide(); 
             menuInicial();
             break;
 
         case 1:
+            sliderMusica.hide(); 
             jogo();
             break;
 
         case 2:
+            sliderMusica.show(); 
             menuOpcoes();
             break;
         case 3:
+            sliderMusica.hide(); 
             menuInfo();
             break;
     }
 
+    volumeMusica = sliderMusica.value();
+    musica.volume(volumeMusica);
+
+    //console.log(volumeMusica);
+
 }
 
 function menuInicial() {
-    background(163,186,255);
+    background(163, 186, 255);
     textSize(32);
-    text("Corta-Diabetes", width - 364, height / 3);
+    text("Corta-Diabetes", width / 2 - 200, height / 3);
     textSize(15);
-    text("Paulo Novo && Hugo Diniz | ECGM - TI ", windowWidth - 475, windowHeight - 30);
+    text("Paulo Novo && Hugo Diniz | ECGM - TI ", width / 2 - 150, height - 30);
 
 }
 
 function menuOpcoes() {
 
-    background(125, 34, 0);
+    background(50, 120, 180);
+    fill(255);
     textSize(32);
-    text("Opcoes", width / 2 - 100, height / 2);
+    text("Menu Opções", width / 2 - 100, height / 2 - 100);
+    textSize(18);
+    text("Volume da Música:", 20, 50);
 
-
+    sliderMusica.position(20, 60);
+    sliderMusica.size(200);
 }
+
 
 function menuInfo() {
 
@@ -240,12 +254,28 @@ function jogo() {
 
     } else {
         textSize(15);
-        text("Gameover!! Tiveste " + score + " pontos!!", width / 2, height / 2);
+        text("Gameover!! Tiveste " + score + " pontos!!", width / 3, height / 2);
     }
 }
 
-function carregaMedia(){
+function initMusica() {
+
+    musica.volume(volumeMusica);
+    musica.loop();
+
+}
+
+function carregaMedia() {
 
     fonteTexto = loadFont("assets/font/joystix_monospace.otf");
+    musica = createAudio("assets/music/undauntable.mp3");
 
+    console.log("carregado");
+
+}
+
+function touchStarted() {
+    if (getAudioContext().state !== 'running') {
+        getAudioContext().resume();
+    }
 }
