@@ -56,7 +56,7 @@ function draw() {
             break;
         case 3:
             menuInfo();
-        break;
+            break;
     }
 
 }
@@ -108,7 +108,7 @@ function gotSpeech() {
 
             } else if (speechRec.resultString == "opções") {
                 estadoJogo = 2;
-            }else if(speechRec.resultString == "ajuda"){
+            } else if (speechRec.resultString == "ajuda" || speechRec.resultString == "info" || speechRec.resultString == "informações") {
                 estadoJogo = 3;
             }
 
@@ -129,7 +129,7 @@ function gotSpeech() {
                 }
                 console.log("reiniciei");
 
-            } else if (speechRec.resultString == "voltar") {
+            } else if (speechRec.resultString == "voltar" || speechRec.resultString == "menu") {
 
                 estadoJogo = 0;
                 gameover = false;
@@ -153,11 +153,16 @@ function jogo() {
             let rastro = rastros[i];
             fill(255, 0, 0, rastro.alpha);
             noStroke();
+            //console.log(rastro);
+            
             circle(rastro.x, rastro.y, 10);
+
             rastro.alpha -= 10;
+
             if (rastro.alpha <= 0) {
                 rastros.splice(i, 1);
             }
+
         }
 
         for (let i = objetos.length - 1; i >= 0; i--) {
@@ -180,6 +185,7 @@ function jogo() {
                     if (distance < 30) {
                         let x = (index.x + thumb.x) * 0.5;
                         let y = (index.y + thumb.y) * 0.5;
+
                         rastros.push({ x, y, alpha: 255 });
 
                         for (let i = objetos.length - 1; i >= 0; i--) {
