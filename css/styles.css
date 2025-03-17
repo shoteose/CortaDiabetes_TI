@@ -1,0 +1,13 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+.button-start {
+    width: 150px;
+    height: 50px;
+    background-color: peachpuff;
+    border-radius: 15px;
+    font-family: 'Trebuchet MS';
+    font-size: 22px;
+}
