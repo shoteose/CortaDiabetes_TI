@@ -7,6 +7,7 @@ let vidas = 3;
 let volumeMusica = 0.5;
 let sliderMusica;
 let rastros = [];
+let bg;
 //let btnIniciar;
 //let btnOpcoes;
 //let btnAjuda;
@@ -27,6 +28,7 @@ let gameover = false;
 function preload() {
     handPose = ml5.handPose({ flipped: true });
     carregaMedia();
+    bg = loadImage("/assets/img/background.png");
 }
 
 function gotHands(results) {
@@ -96,12 +98,37 @@ function draw() {
 }
 
 function menuInicial() {
-    background(163, 186, 255);
+    background(bg);
+    fill('white');
+    rect(width / 2 - 200, 20, 400, 80)
     textSize(32);
-    text("Corta-Diabetes", width / 2 - 200, height / 3);
-    textSize(15);
-    text("Paulo Novo && Hugo Diniz | ECGM - TI ", width / 2 - 150, height - 30);
+    fill(0);
+    text("Corta-Diabetes", width / 2 - 190, height / 7);
+    
 
+    fill('green');
+    rect(width / 2 - 85, height / 2 - 65, 180, 40)
+    textSize(20);
+    fill(0);
+    text("Iniciar", width / 2 - 55, height / 2 - 40);
+    
+    fill('red');
+    rect(width / 2 - 85, height / 2 + 5, 180, 40)
+    textSize(20);
+    fill(0);
+    text("Opções", width / 2 - 45, height / 2 + 30);
+    
+    fill('lightblue');
+    rect(width / 2 - 85, height / 2 + 75, 180, 40)
+    textSize(20);
+    fill(0);
+    text("Como jogar", width / 2 - 80, height / 2 + 100);
+
+    fill('white');
+    rect(width / 4, height - 50, 470, 30);
+    textSize(15);
+    fill('black');
+    text("Paulo Novo && Hugo Diniz | ECGM - TI ", width / 2 - 150, height - 30);
 }
 
 function menuOpcoes() {
@@ -272,6 +299,28 @@ function carregaMedia() {
 
     console.log("carregado");
 
+}
+
+function mousePressed() {
+    if (estadoJogo === 0) {
+        //botao iniciar
+        if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 &&
+            mouseY > height / 2 - 65 && mouseY < height / 2 - 25) {
+            estadoJogo = 1;
+        }
+        
+        //botao das opcoes
+        if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 &&
+            mouseY > height / 2 + 5 && mouseY < height / 2 + 45) {
+            estadoJogo = 2;
+        }
+        
+        //botao como jogar
+        if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 &&
+            mouseY > height / 2 + 75 && mouseY < height / 2 + 115) {
+            estadoJogo = 3;
+        }
+    }
 }
 
 function touchStarted() {
