@@ -308,6 +308,7 @@ function mousePressed() {
         if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 &&
             mouseY > height / 2 - 65 && mouseY < height / 2 - 25) {
             estadoJogo = 1;
+            initJogo(); 
         }
         
         //botao das opcoes
