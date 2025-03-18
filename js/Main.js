@@ -140,10 +140,7 @@ function gotSpeech() {
             if (speechRec.resultString == "jogar") {
                 estadoJogo = 1;
 
-                objetos = [];
-                for (let i = 0; i < 5; i++) {
-                    objetos.push(new Objeto());
-                }
+                initJogo();
 
             } else if (speechRec.resultString == "opções") {
                 estadoJogo = 2;
@@ -165,10 +162,7 @@ function gotSpeech() {
                 score = 0;
                 vidas = 3;
 
-                objetos = [];
-                for (let i = 0; i < 5; i++) {
-                    objetos.push(new Objeto());
-                }
+                initJogo();
                 console.log("reiniciei");
 
             } else if (speechRec.resultString == "voltar" || speechRec.resultString == "menu") {
@@ -179,6 +173,13 @@ function gotSpeech() {
 
             }
         }
+    }
+}
+
+function initJogo(){
+    objetos = [];
+    for (let i = 0; i < 5; i++) {
+        objetos.push(new Objeto());
     }
 }
 
