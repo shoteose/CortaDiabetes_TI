@@ -186,20 +186,23 @@ function menuInfo() {
 
 function gameOverScreen() {
 
+  fill('white');
+  rect(width / 4 - 30, height / 3, 400, 50);
   textSize(15);
-  text("Gameover!! Tiveste " + score + " pontos!!", width / 2 - 125, height / 2);
+  fill('black');
+  text("Gameover!! Tiveste " + score + " pontos!!", width / 2 - 165, height / 2 - 50);
 
   fill("green");
   rect(width / 2 - 85, height / 2 + 5, 180, 40);
   textSize(20);
   fill(0);
-  text("Reiniciar", width / 2 - 45, height / 2 + 30);
+  text("Reiniciar", width / 2 - 65, height / 2 + 30);
 
   fill("red");
   rect(width / 2 - 85, height / 2 + 75, 180, 40);
   textSize(20);
   fill(0);
-  text("Voltar", width / 2 - 80, height / 2 + 100);
+  text("Voltar", width / 2 - 40, height / 2 + 100);
 
 }
 
@@ -315,8 +318,10 @@ function jogo() {
       }
     }
 
-    fill(255);
+    fill(0);
+    rect(0, 0, 190, 75);
     textSize(24);
+    fill(255);
     text("Score: " + score, 10, 30);
     text("Vidas: " + vidas, 10, 60);
 
