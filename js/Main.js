@@ -213,7 +213,7 @@ function gotSpeech() {
     if (speechRec.resultString == "voltar" && estadoJogo != 1) estadoJogo = 0;
 
     if (estadoJogo == 0) {
-      if (speechRec.resultString == "jogar") {
+      if (speechRec.resultString == "jogar" || speechRec.resultString == "iniciar") {
         estadoJogo = 1;
 
         initJogo();
