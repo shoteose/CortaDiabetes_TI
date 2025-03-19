@@ -4,7 +4,7 @@ let hands = [];
 let objetos = [];
 let score = 0;
 let vidas = 3;
-let volumeMusica = 0.5;
+let volumeMusica = 0.1;
 let sliderMusica;
 let rastros = [];
 let bg;
@@ -14,319 +14,377 @@ let bg;
 //let btnVoltar;
 
 /***
- * 
+ *
  * 0 = menu inicial
  * 1 = jogo
  * 2 = menu opcoes
  * 3 = informações
- * 
+ *
  * **/
 let estadoJogo = 0;
 let speechRec;
 let gameover = false;
 
 function preload() {
-    handPose = ml5.handPose({ flipped: true });
-    carregaMedia();
-    bg = loadImage("/assets/img/background.png");
+  handPose = ml5.handPose({ flipped: true });
+  carregaMedia();
+  bg = loadImage("/assets/img/background.png");
 }
 
 function gotHands(results) {
-    hands = results;
+  hands = results;
 }
 
 function setup() {
-    createCanvas(640,480);
-    video = createCapture(VIDEO, { flipped: true });
-    video.hide();
-    
-    handPose.detectStart(video, gotHands);
+  createCanvas(640, 480);
+  video = createCapture(VIDEO, { flipped: true });
+  video.hide();
 
-    let lang = navigation.language || 'pt-BR';
-    speechRec = new p5.SpeechRec(lang, gotSpeech);
-    let continuous = true;
-    let interim = false;
-    speechRec.start(continuous, interim);
+  handPose.detectStart(video, gotHands);
 
-    slider();
+  let lang = navigation.language || "pt-BR";
+  speechRec = new p5.SpeechRec(lang, gotSpeech);
+  let continuous = true;
+  let interim = false;
+  speechRec.start(continuous, interim);
 
-    textFont(fonteTexto);
+  slider();
 
-    initMusica();
+  textFont(fonteTexto);
 
+  initMusica();
 }
 
-function slider(){
-
-    sliderMusica = createSlider(0, 1, volumeMusica, 0.01);
-    sliderMusica.position(20, 50);
-    sliderMusica.size(200);
-    sliderMusica.hide();
-
+function slider() {
+  sliderMusica = createSlider(0, 1, volumeMusica, 0.01);
+  sliderMusica.position(20, 50);
+  sliderMusica.size(200);
+  sliderMusica.hide();
 }
 
 function draw() {
+  initMusica();
 
-    initMusica();
+  switch (estadoJogo) {
+    case 0:
+      sliderMusica.hide();
+      menuInicial();
+      break;
 
-    switch (estadoJogo) {
-        case 0:
-            sliderMusica.hide(); 
-            menuInicial();
-            break;
+    case 1:
+      sliderMusica.hide();
+      jogo();
+      break;
 
-        case 1:
-            sliderMusica.hide(); 
-            jogo();
-            break;
+    case 2:
+      sliderMusica.show();
+      menuOpcoes();
+      break;
+    case 3:
+      sliderMusica.hide();
+      menuInfo();
+      break;
+  }
 
-        case 2:
-            sliderMusica.show(); 
-            menuOpcoes();
-            break;
-        case 3:
-            sliderMusica.hide(); 
-            menuInfo();
-            break;
-    }
+  volumeMusica = sliderMusica.value();
+  musica.volume(volumeMusica);
 
-    volumeMusica = sliderMusica.value();
-    musica.volume(volumeMusica);
-
-    //console.log(volumeMusica);
-
+  //console.log(volumeMusica);
 }
 
 function menuInicial() {
-    background(bg);
-    fill('white');
-    rect(width / 2 - 200, 20, 400, 80)
-    textSize(32);
-    fill(0);
-    text("Corta-Diabetes", width / 2 - 190, height / 7);
-    
+  background(bg);
+  fill("white");
+  rect(width / 2 - 200, 20, 400, 80);
+  textSize(32);
+  fill(0);
+  text("Corta-Diabetes", width / 2 - 190, height / 7);
 
-    fill('green');
-    rect(width / 2 - 85, height / 2 - 65, 180, 40)
-    textSize(20);
-    fill(0);
-    text("Iniciar", width / 2 - 55, height / 2 - 40);
-    
-    fill('red');
-    rect(width / 2 - 85, height / 2 + 5, 180, 40)
-    textSize(20);
-    fill(0);
-    text("Opções", width / 2 - 45, height / 2 + 30);
-    
-    fill('lightblue');
-    rect(width / 2 - 85, height / 2 + 75, 180, 40)
-    textSize(20);
-    fill(0);
-    text("Como jogar", width / 2 - 80, height / 2 + 100);
+  fill("green");
+  rect(width / 2 - 85, height / 2 - 65, 180, 40);
+  textSize(20);
+  fill(0);
+  text("Iniciar", width / 2 - 55, height / 2 - 40);
 
-    fill('white');
-    rect(width / 4, height - 50, 470, 30);
-    textSize(15);
-    fill('black');
-    text("Paulo Novo && Hugo Diniz | ECGM - TI ", width / 2 - 150, height - 30);
+  fill("red");
+  rect(width / 2 - 85, height / 2 + 5, 180, 40);
+  textSize(20);
+  fill(0);
+  text("Opções", width / 2 - 45, height / 2 + 30);
+
+  fill("lightblue");
+  rect(width / 2 - 85, height / 2 + 75, 180, 40);
+  textSize(20);
+  fill(0);
+  text("Como jogar", width / 2 - 80, height / 2 + 100);
+
+  fill("white");
+  rect(width / 4, height - 50, 470, 30);
+  textSize(15);
+  fill("black");
+  text("Paulo Novo && Hugo Diniz | ECGM - TI ", width / 2 - 150, height - 30);
 }
 
 function menuOpcoes() {
+  background(bg);
+  fill("white");
+  rect(width / 2 - 105, height / 5 - 10, 200, 50);
+  textSize(32);
+  fill("black");
+  text("Opções", width / 2 - 80, height / 2 - 120);
 
-    background(50, 120, 180);
-    fill(255);
-    textSize(32);
-    text("Menu Opções", width / 2 - 100, height / 2 - 100);
-    textSize(18);
-    text("Volume da Música:", 20, 50);
+  fill("lightblue");
+  rect(width / 3 - 20, height / 2 - 50, 260, 70);
+  textSize(18);
+  fill("black");
+  text("Volume da Música:", width / 2 - 120, height / 2 - 30);
 
-    sliderMusica.position(20, 60);
-    sliderMusica.size(200);
+  sliderMusica.position(width / 2 - 95, height / 2);
+  sliderMusica.size(200);
+
+  fill("red");
+  rect(width / 2 - 55, height / 2 + 75, 120, 40);
+  textSize(20);
+  fill(255);
+  text("Voltar", width / 2 - 45, height / 2 + 100);
 }
 
-
 function menuInfo() {
+  background(bg);
+  fill("lightblue");
+  rect(width / 4, height / 5 - 60, 300, 45);
+  textSize(32);
+  fill("black");
+  text("Informações", width / 4, height / 2 - 170);
 
-    background(67, 120, 30);
-    textSize(32);
-    text("Ajuda info", width / 2 - 100, height / 2);
+  fill("white");
+  rect(width / 7 - 10, height / 3 - 60, 470, 310);
+  textSize(14);
+  fill("black");
+  text("Bem-vindo ao Corta-Diabetes.", width / 4 - 20, height / 2 - 120);
+  text("Este é um jogo interativo sendo o ", width / 4 - 70, height / 2 - 80);
+  text(
+    "principal objetivo do jogo cortar os ",
+    width / 4 - 70,
+    height / 2 - 60
+  );
+  text("alimentos prejudiciais à saúde.", width / 4 - 70, height / 2 - 40);
+  text("Para cortar os objetos prejudiciais", width / 4 - 70, height / 2);
+  text("basta juntar o polegar ao indicador.", width / 4 - 70, height / 2 + 20);
+  text(
+    "Cuidado com os alimentos bons e tenta",
+    width / 4 - 70,
+    height / 2 + 40
+  );
+  text("apanhar as vidas que vão aparecendo.", width / 4 - 70, height / 2 + 60);
+  text("Por cada fruta que apanhes", width / 4 - 70, height / 2 + 100);
+  text("perdes uma vida.", width / 4 - 70, height / 2 + 120);
+  text("Boa sorte!", width / 2 - 70, height / 2 + 160);
 
-
+  fill("red");
+  rect(width / 2 - 65, height - 55, 120, 40);
+  textSize(20);
+  fill(255);
+  text("Voltar", width / 2 - 55, height - 30);
 }
 
 function gotSpeech() {
+  if (speechRec.resultValue) {
+    console.log(speechRec.resultString);
 
-    if (speechRec.resultValue) {
+    if (speechRec.resultString == "voltar" && estadoJogo != 1) estadoJogo = 0;
 
-        console.log(speechRec.resultString);
+    if (estadoJogo == 0) {
+      if (speechRec.resultString == "jogar") {
+        estadoJogo = 1;
 
-        if (speechRec.resultString == "voltar" && estadoJogo != 1) estadoJogo = 0;
-
-        if (estadoJogo == 0) {
-
-            if (speechRec.resultString == "jogar") {
-                estadoJogo = 1;
-
-                initJogo();
-
-            } else if (speechRec.resultString == "opções") {
-                estadoJogo = 2;
-            } else if (speechRec.resultString == "ajuda" || speechRec.resultString == "info" || speechRec.resultString == "informações") {
-                estadoJogo = 3;
-            }
-
-        }
-
-        console.log(gameover);
-
-        if (gameover) {
-
-            if (speechRec.resultString == "reiniciar") {
-
-                gameover = false;
-                estadoJogo = 1;
-
-                score = 0;
-                vidas = 3;
-
-                initJogo();
-                console.log("reiniciei");
-
-            } else if (speechRec.resultString == "voltar" || speechRec.resultString == "menu") {
-
-                estadoJogo = 0;
-                gameover = false;
-                console.log("voltei");
-
-            }
-        }
+        initJogo();
+      } else if (speechRec.resultString == "opções") {
+        estadoJogo = 2;
+      } else if (
+        speechRec.resultString == "ajuda" ||
+        speechRec.resultString == "info" ||
+        speechRec.resultString == "informações"
+      ) {
+        estadoJogo = 3;
+      }
     }
+
+    console.log(gameover);
+
+    if (gameover) {
+      if (speechRec.resultString == "reiniciar") {
+        gameover = false;
+        estadoJogo = 1;
+
+        score = 0;
+        vidas = 3;
+
+        initJogo();
+        console.log("reiniciei");
+      } else if (
+        speechRec.resultString == "voltar" ||
+        speechRec.resultString == "menu"
+      ) {
+        estadoJogo = 0;
+        gameover = false;
+        console.log("voltei");
+      }
+    }
+  }
 }
 
-function initJogo(){
-    objetos = [];
-    for (let i = 0; i < 5; i++) {
-        objetos.push(new Objeto());
-    }
+function initJogo() {
+  objetos = [];
+  for (let i = 0; i < 5; i++) {
+    objetos.push(new Objeto());
+  }
 }
 
 function jogo() {
+  if (!gameover) {
+    image(video, 0, 0);
 
-    if (!gameover) {
-        image(video, 0, 0);
+    for (let i = rastros.length - 1; i >= 0; i--) {
+      let rastro = rastros[i];
+      fill(255, 0, 0, rastro.alpha);
+      noStroke();
+      //console.log(rastro);
 
-        for (let i = rastros.length - 1; i >= 0; i--) {
-            let rastro = rastros[i];
-            fill(255, 0, 0, rastro.alpha);
-            noStroke();
-            //console.log(rastro);
+      circle(rastro.x, rastro.y, 10);
 
-            circle(rastro.x, rastro.y, 10);
+      rastro.alpha -= 10;
 
-            rastro.alpha -= 10;
+      if (rastro.alpha <= 0) {
+        rastros.splice(i, 1);
+      }
+    }
 
-            if (rastro.alpha <= 0) {
-                rastros.splice(i, 1);
-            }
-        }
+    for (let i = objetos.length - 1; i >= 0; i--) {
+      objetos[i].update();
+      objetos[i].mostra();
 
-        for (let i = objetos.length - 1; i >= 0; i--) {
-            objetos[i].update();
-            objetos[i].mostra();
+      if (objetos[i].saiuEcra()) {
+        objetos.splice(i, 1);
+        objetos.push(new Objeto());
+      }
+    }
 
-            if (objetos[i].saiuEcra()) {
+    if (hands.length > 0) {
+      for (let hand of hands) {
+        if (hand.handedness === "Right") {
+          let index = hand.index_finger_tip;
+          let thumb = hand.thumb_tip;
+          let distance = dist(index.x, index.y, thumb.x, thumb.y);
+
+          if (distance < 30) {
+            let x = (index.x + thumb.x) * 0.5;
+            let y = (index.y + thumb.y) * 0.5;
+
+            rastros.push({ x, y, alpha: 255 });
+
+            for (let i = objetos.length - 1; i >= 0; i--) {
+              if (objetos[i].detetaColisao(x, y)) {
+                if (objetos[i].tipo === "mau") {
+                  score++;
+                } else if (objetos[i].tipo === "coracao") {
+                  vidas++;
+                } else if (objetos[i].tipo === "bom") {
+                  vidas--;
+                }
                 objetos.splice(i, 1);
                 objetos.push(new Objeto());
+              }
             }
+          }
         }
-
-        if (hands.length > 0) {
-            for (let hand of hands) {
-                if (hand.handedness === "Right") {
-                    let index = hand.index_finger_tip;
-                    let thumb = hand.thumb_tip;
-                    let distance = dist(index.x, index.y, thumb.x, thumb.y);
-
-                    if (distance < 30) {
-                        let x = (index.x + thumb.x) * 0.5;
-                        let y = (index.y + thumb.y) * 0.5;
-
-                        rastros.push({ x, y, alpha: 255 });
-
-                        for (let i = objetos.length - 1; i >= 0; i--) {
-                            if (objetos[i].detetaColisao(x, y)) {
-                                if (objetos[i].tipo === "mau") {
-                                    score++;
-                                } else if (objetos[i].tipo === "coracao") {
-                                    vidas++;
-                                } else if (objetos[i].tipo === "bom") {
-                                    vidas--;
-                                }
-                                objetos.splice(i, 1);
-                                objetos.push(new Objeto());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        fill(255);
-        textSize(24);
-        text("Score: " + score, 10, 30);
-        text("Vidas: " + vidas, 10, 60);
-
-        if (vidas <= 0) {
-            gameover = true;
-        }
-
-    } else {
-        textSize(15);
-        text("Gameover!! Tiveste " + score + " pontos!!", width / 3, height / 2);
+      }
     }
+
+    fill(255);
+    textSize(24);
+    text("Score: " + score, 10, 30);
+    text("Vidas: " + vidas, 10, 60);
+
+    if (vidas <= 0) {
+      gameover = true;
+    }
+  } else {
+    textSize(15);
+    text("Gameover!! Tiveste " + score + " pontos!!", width / 3, height / 2);
+  }
 }
 
 function initMusica() {
-
-    musica.volume(volumeMusica);
-    musica.loop();
-
+  musica.volume(volumeMusica);
+  musica.loop();
 }
 
 function carregaMedia() {
+  fonteTexto = loadFont("assets/font/joystix_monospace.otf");
+  musica = createAudio("assets/music/undauntable.mp3");
 
-    fonteTexto = loadFont("assets/font/joystix_monospace.otf");
-    musica = createAudio("assets/music/undauntable.mp3");
-
-    console.log("carregado");
-
+  console.log("carregado");
 }
 
 function mousePressed() {
-    if (estadoJogo === 0) {
-        //botao iniciar
-        if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 &&
-            mouseY > height / 2 - 65 && mouseY < height / 2 - 25) {
-            estadoJogo = 1;
-            initJogo(); 
-        }
-        
-        //botao das opcoes
-        if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 &&
-            mouseY > height / 2 + 5 && mouseY < height / 2 + 45) {
-            estadoJogo = 2;
-        }
-        
-        //botao como jogar
-        if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 &&
-            mouseY > height / 2 + 75 && mouseY < height / 2 + 115) {
-            estadoJogo = 3;
-        }
+  if (estadoJogo === 0) {
+    //botao iniciar
+    if (
+      mouseX > width / 2 - 85 &&
+      mouseX < width / 2 + 95 &&
+      mouseY > height / 2 - 65 &&
+      mouseY < height / 2 - 25
+    ) {
+      estadoJogo = 1;
+      initJogo();
     }
+
+    //botao das opcoes
+    if (
+      mouseX > width / 2 - 85 &&
+      mouseX < width / 2 + 95 &&
+      mouseY > height / 2 + 5 &&
+      mouseY < height / 2 + 45
+    ) {
+      estadoJogo = 2;
+    }
+
+    //botao como jogar
+    if (
+      mouseX > width / 2 - 85 &&
+      mouseX < width / 2 + 95 &&
+      mouseY > height / 2 + 75 &&
+      mouseY < height / 2 + 115
+    ) {
+      estadoJogo = 3;
+    }
+  } else if (estadoJogo === 2) {
+    //botao voltar opcoes
+    if (
+      mouseX > width / 2 - 85 &&
+      mouseX < width / 2 + 95 &&
+      mouseY > height / 2 + 75 &&
+      mouseY < height / 2 + 115
+    ) {
+      estadoJogo = 0;
+    }
+  }
+  else if(estadoJogo === 3) {
+    //botao voltar info
+    if (
+      mouseX > width / 2 - 65 &&
+      mouseX < width / 2 + 55 &&
+      mouseY > height - 55 &&
+      mouseY < height - 15
+    ) {
+      estadoJogo = 0;
+    }
+  }
 }
 
 function touchStarted() {
-    if (getAudioContext().state !== 'running') {
-        getAudioContext().resume();
-    }
+  if (getAudioContext().state !== "running") {
+    getAudioContext().resume();
+  }
 }
