@@ -8,10 +8,6 @@ let volumeMusica = 0.1;
 let sliderMusica;
 let rastros = [];
 let bg;
-//let btnIniciar;
-//let btnOpcoes;
-//let btnAjuda;
-//let btnVoltar;
 
 /***
  *
@@ -28,7 +24,6 @@ let gameover = false;
 function preload() {
   handPose = ml5.handPose({ flipped: true });
   carregaMedia();
-  bg = loadImage("/assets/img/background.png");
 }
 
 function gotHands(results) {
@@ -93,6 +88,7 @@ function draw() {
 }
 
 function menuInicial() {
+  
   background(bg);
   fill("white");
   rect(width / 2 - 200, 20, 400, 80);
@@ -177,7 +173,7 @@ function menuInfo() {
     height / 2 + 40
   );
   text("apanhar as vidas que vão aparecendo.", width / 4 - 70, height / 2 + 60);
-  text("Por cada fruta que apanhes", width / 4 - 70, height / 2 + 100);
+  text("Por cada fruta que cortes", width / 4 - 70, height / 2 + 100);
   text("perdes uma vida.", width / 4 - 70, height / 2 + 120);
   text("Boa sorte!", width / 2 - 70, height / 2 + 160);
 
@@ -186,6 +182,25 @@ function menuInfo() {
   textSize(20);
   fill(255);
   text("Voltar", width / 2 - 55, height - 30);
+}
+
+function gameOverScreen() {
+
+  textSize(15);
+  text("Gameover!! Tiveste " + score + " pontos!!", width / 2 - 125, height / 2);
+
+  fill("green");
+  rect(width / 2 - 85, height / 2 + 5, 180, 40);
+  textSize(20);
+  fill(0);
+  text("Reiniciar", width / 2 - 45, height / 2 + 30);
+
+  fill("red");
+  rect(width / 2 - 85, height / 2 + 75, 180, 40);
+  textSize(20);
+  fill(0);
+  text("Voltar", width / 2 - 80, height / 2 + 100);
+
 }
 
 function gotSpeech() {
@@ -214,14 +229,9 @@ function gotSpeech() {
 
     if (gameover) {
       if (speechRec.resultString == "reiniciar") {
-        gameover = false;
-        estadoJogo = 1;
 
-        score = 0;
-        vidas = 3;
+        restart();
 
-        initJogo();
-        console.log("reiniciei");
       } else if (
         speechRec.resultString == "voltar" ||
         speechRec.resultString == "menu"
@@ -235,6 +245,9 @@ function gotSpeech() {
 }
 
 function initJogo() {
+  score = 0;
+  vidas = 3;
+
   objetos = [];
   for (let i = 0; i < 5; i++) {
     objetos.push(new Objeto());
@@ -242,6 +255,7 @@ function initJogo() {
 }
 
 function jogo() {
+  console.log(gameover);
   if (!gameover) {
     image(video, 0, 0);
 
@@ -310,8 +324,7 @@ function jogo() {
       gameover = true;
     }
   } else {
-    textSize(15);
-    text("Gameover!! Tiveste " + score + " pontos!!", width / 3, height / 2);
+    gameOverScreen();
   }
 }
 
@@ -321,65 +334,68 @@ function initMusica() {
 }
 
 function carregaMedia() {
+  bg = loadImage("assets/img/background.png");
   fonteTexto = loadFont("assets/font/joystix_monospace.otf");
   musica = createAudio("assets/music/undauntable.mp3");
 
   console.log("carregado");
 }
 
+function restart() {
+  gameover = false;
+  estadoJogo = 1;
+
+  initJogo();
+  console.log("reiniciei");
+}
+
 function mousePressed() {
-  if (estadoJogo === 0) {
-    //botao iniciar
-    if (
-      mouseX > width / 2 - 85 &&
-      mouseX < width / 2 + 95 &&
-      mouseY > height / 2 - 65 &&
-      mouseY < height / 2 - 25
-    ) {
-      estadoJogo = 1;
-      initJogo();
-    }
+  switch (estadoJogo) {
+    case 0:
+      // Botão iniciar
+      if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 && mouseY > height / 2 - 65 && mouseY < height / 2 - 25) {
+        estadoJogo = 1;
+        initJogo();
+      }
+      // Botão das opções
+      else if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 && mouseY > height / 2 + 5 && mouseY < height / 2 + 45) {
+        estadoJogo = 2;
+      }
+      // Botão como jogar
+      else if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 && mouseY > height / 2 + 75 && mouseY < height / 2 + 115) {
+        estadoJogo = 3;
+      }
+      break;
 
-    //botao das opcoes
-    if (
-      mouseX > width / 2 - 85 &&
-      mouseX < width / 2 + 95 &&
-      mouseY > height / 2 + 5 &&
-      mouseY < height / 2 + 45
-    ) {
-      estadoJogo = 2;
-    }
+    case 1:
+      if (gameover) {
+        // Botão reiniciar
+        if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 && mouseY > height / 2 + 5 && mouseY < height / 2 + 45) {
+          restart();
+        }
+        // Botão voltar
+        else if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 && mouseY > height / 2 + 75 && mouseY < height / 2 + 115) {
+          
+          estadoJogo = 0;
+          gameover = false;
 
-    //botao como jogar
-    if (
-      mouseX > width / 2 - 85 &&
-      mouseX < width / 2 + 95 &&
-      mouseY > height / 2 + 75 &&
-      mouseY < height / 2 + 115
-    ) {
-      estadoJogo = 3;
-    }
-  } else if (estadoJogo === 2) {
-    //botao voltar opcoes
-    if (
-      mouseX > width / 2 - 85 &&
-      mouseX < width / 2 + 95 &&
-      mouseY > height / 2 + 75 &&
-      mouseY < height / 2 + 115
-    ) {
-      estadoJogo = 0;
-    }
-  }
-  else if(estadoJogo === 3) {
-    //botao voltar info
-    if (
-      mouseX > width / 2 - 65 &&
-      mouseX < width / 2 + 55 &&
-      mouseY > height - 55 &&
-      mouseY < height - 15
-    ) {
-      estadoJogo = 0;
-    }
+        }
+      }
+      break;
+
+    case 2:
+      // Botão voltar opções
+      if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 && mouseY > height / 2 + 75 && mouseY < height / 2 + 115) {
+        estadoJogo = 0;
+      }
+      break;
+
+    case 3:
+      // Botão voltar info
+      if (mouseX > width / 2 - 65 && mouseX < width / 2 + 55 && mouseY > height - 55 && mouseY < height - 15) {
+        estadoJogo = 0;
+      }
+      break;
   }
 }
 
