@@ -24,10 +24,10 @@ class Objeto {
             let imagens = [
                 "assets/img/frutas/apple1.png",
                 "assets/img/frutas/banana1.png",
-                "assets/img/frutas/blackberry.png",
-                "assets/img/frutas/cherry.png",
-                "assets/img/frutas/coconut.png",
-                "assets/img/frutas/pineapple.png",
+                "assets/img/frutas/blackberry1.png",
+                "assets/img/frutas/cherry1.png",
+                "assets/img/frutas/coconut1.png",
+                "assets/img/frutas/pineapple1.png",
                 "assets/img/frutas/strawberry1.png"
             ];
 

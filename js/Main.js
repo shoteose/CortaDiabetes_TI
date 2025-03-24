@@ -7,7 +7,9 @@ let vidas = 3;
 let volumeMusica = 0.1;
 let sliderMusica;
 let rastros = [];
+let splashes = [];
 let bg;
+let pause = false;
 
 /***
  *
@@ -88,7 +90,7 @@ function draw() {
 }
 
 function menuInicial() {
-  
+
   background(bg);
   fill("white");
   rect(width / 2 - 200, 20, 400, 80);
@@ -262,62 +264,6 @@ function jogo() {
   if (!gameover) {
     image(video, 0, 0);
 
-    for (let i = rastros.length - 1; i >= 0; i--) {
-      let rastro = rastros[i];
-      fill(255, 0, 0, rastro.alpha);
-      noStroke();
-      //console.log(rastro);
-
-      circle(rastro.x, rastro.y, 10);
-
-      rastro.alpha -= 10;
-
-      if (rastro.alpha <= 0) {
-        rastros.splice(i, 1);
-      }
-    }
-
-    for (let i = objetos.length - 1; i >= 0; i--) {
-      objetos[i].update();
-      objetos[i].mostra();
-
-      if (objetos[i].saiuEcra()) {
-        objetos.splice(i, 1);
-        objetos.push(new Objeto());
-      }
-    }
-
-    if (hands.length > 0) {
-      for (let hand of hands) {
-        if (hand.handedness === "Right") {
-          let index = hand.index_finger_tip;
-          let thumb = hand.thumb_tip;
-          let distance = dist(index.x, index.y, thumb.x, thumb.y);
-
-          if (distance < 30) {
-            let x = (index.x + thumb.x) * 0.5;
-            let y = (index.y + thumb.y) * 0.5;
-
-            rastros.push({ x, y, alpha: 255 });
-
-            for (let i = objetos.length - 1; i >= 0; i--) {
-              if (objetos[i].detetaColisao(x, y)) {
-                if (objetos[i].tipo === "mau") {
-                  score++;
-                } else if (objetos[i].tipo === "coracao") {
-                  vidas++;
-                } else if (objetos[i].tipo === "bom") {
-                  vidas--;
-                }
-                objetos.splice(i, 1);
-                objetos.push(new Objeto());
-              }
-            }
-          }
-        }
-      }
-    }
-
     fill(0);
     rect(0, 0, 190, 75);
     textSize(24);
@@ -325,9 +271,108 @@ function jogo() {
     text("Score: " + score, 10, 30);
     text("Vidas: " + vidas, 10, 60);
 
+    if (!pause) {
+
+
+      for (let i = rastros.length - 1; i >= 0; i--) {
+        let rastro = rastros[i];
+        fill(255, 0, 0, rastro.alpha);
+        noStroke();
+        //console.log(rastro);
+
+        circle(rastro.x, rastro.y, 10);
+
+        rastro.alpha -= 10;
+
+        if (rastro.alpha <= 0) {
+          rastros.splice(i, 1);
+        }
+      }
+
+      for (let i = splashes.length - 1; i >= 0; i--) {
+        let splash = splashes[i];
+
+        switch (splash.tipo) {
+          case "bom":
+            fill(255, 0, 0, splash.alpha);
+            break;
+          case "mau":
+            fill(0, 255, 0, splash.alpha);
+            break;
+          case "coracao":
+            fill(0, 0, 255, splash.alpha);
+            break;
+        }
+
+        noStroke();
+        //console.log(rastro);
+
+        circle(splash.x, splash.y, 50);
+
+        splash.alpha -= 10;
+
+        if (splash.alpha <= 0) {
+          splashes.splice(i, 1);
+        }
+      }
+
+      for (let i = objetos.length - 1; i >= 0; i--) {
+        objetos[i].update();
+        objetos[i].mostra();
+
+        if (objetos[i].saiuEcra()) {
+          objetos.splice(i, 1);
+          objetos.push(new Objeto());
+        }
+      }
+
+      if (hands.length > 0) {
+        for (let hand of hands) {
+          if (hand.handedness === "Right") {
+            let index = hand.index_finger_tip;
+            let thumb = hand.thumb_tip;
+            let distance = dist(index.x, index.y, thumb.x, thumb.y);
+
+            if (distance < 30) {
+              let x = (index.x + thumb.x) * 0.5;
+              let y = (index.y + thumb.y) * 0.5;
+
+              rastros.push({ x, y, alpha: 255 });
+
+              for (let i = objetos.length - 1; i >= 0; i--) {
+                if (objetos[i].detetaColisao(x, y)) {
+                  if (objetos[i].tipo === "mau") {
+                    score++;
+                    splashes.push({ x: objetos[i].x, y: objetos[i].y, tipo: "mau", alpha: 255 });
+                  } else if (objetos[i].tipo === "coracao") {
+                    vidas++;
+                    splashes.push({ x: objetos[i].x, y: objetos[i].y, tipo: "coracao", alpha: 255 });
+
+                  } else if (objetos[i].tipo === "bom") {
+                    vidas--;
+                    splashes.push({ x: objetos[i].x, y: objetos[i].y, tipo: "bom", alpha: 255 });
+
+                  }
+                  objetos.splice(i, 1);
+                  objetos.push(new Objeto());
+                }
+              }
+            }
+          }
+        }
+      }
+
+
+
+    } else {
+      fill(255, 0, 0);
+      text("JOGO EM PAUSA", width / 2 - 150, height / 2);
+    }
+
     if (vidas <= 0) {
       gameover = true;
     }
+
   } else {
     gameOverScreen();
   }
@@ -352,6 +397,15 @@ function restart() {
 
   initJogo();
   console.log("reiniciei");
+}
+
+function keyPressed() {
+  if (estadoJogo == 1) {
+    if (keyCode == ESCAPE) {
+      pause = !pause;
+    }
+  }
+
 }
 
 function mousePressed() {
@@ -380,7 +434,7 @@ function mousePressed() {
         }
         // Botão voltar
         else if (mouseX > width / 2 - 85 && mouseX < width / 2 + 95 && mouseY > height / 2 + 75 && mouseY < height / 2 + 115) {
-          
+
           estadoJogo = 0;
           gameover = false;
 
