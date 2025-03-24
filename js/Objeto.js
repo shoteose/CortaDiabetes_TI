@@ -8,6 +8,7 @@ class Objeto {
         this.gravidade = 0.4;
         this.tipo = this.definirTipo();
         this.img = loadImage(this.definirImagem(this.tipo));
+        this.som = createAudio(this.definirSom(this.tipo));
     }
 
     definirTipo() {
@@ -17,6 +18,24 @@ class Objeto {
         return "coracao";
     }
 
+    definirSom(tipo) {
+
+        if (tipo === "bom") {
+            return "assets/music/pickupMau.wav";
+        };
+
+        if (tipo === "mau") {
+
+            return "assets/music/pickupBom.wav";
+        };
+
+        return "assets/music/powerCoracao.wav";
+
+    }
+
+    playSom(){
+        this.som.play();
+    }
 
     definirImagem(tipo) {
         if (tipo === "bom") {
@@ -48,7 +67,7 @@ class Objeto {
 
             return imagens[r];
         };
-       
+
         return "assets/img/coracaof.png";
     }
 

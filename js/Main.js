@@ -56,6 +56,7 @@ function slider() {
   sliderMusica = createSlider(0, 1, volumeMusica, 0.01);
   sliderMusica.position(20, 50);
   sliderMusica.size(200);
+  sliderMusica.addClass('inputSlider');
   sliderMusica.hide();
 }
 
@@ -230,7 +231,7 @@ function gotSpeech() {
       }
     }
 
-    console.log(gameover);
+   // console.log(gameover);
 
     if (gameover) {
       if (speechRec.resultString == "reiniciar") {
@@ -243,7 +244,7 @@ function gotSpeech() {
       ) {
         estadoJogo = 0;
         gameover = false;
-        console.log("voltei");
+        //console.log("voltei");
       }
     }
   }
@@ -260,7 +261,7 @@ function initJogo() {
 }
 
 function jogo() {
-  console.log(gameover);
+  //console.log(gameover);
   if (!gameover) {
     image(video, 0, 0);
 
@@ -351,8 +352,8 @@ function jogo() {
                   } else if (objetos[i].tipo === "bom") {
                     vidas--;
                     splashes.push({ x: objetos[i].x, y: objetos[i].y, tipo: "bom", alpha: 255 });
-
                   }
+                  objetos[i].playSom();
                   objetos.splice(i, 1);
                   objetos.push(new Objeto());
                 }

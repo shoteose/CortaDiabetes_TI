@@ -1,3 +1,8 @@
-main {
-    justify-self: center;
+body {
+    justify-items: center;
+}
+
+.inputSlider {
+    justify-self: anchor-center;
+    left: 0 !important;
 }
